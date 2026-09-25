@@ -1,0 +1,318 @@
+// Prisma schema for AI Customer Support Agent Builder
+// Multi-tenant, role-based SaaS architecture
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String           @id @default(uuid())
+  email              String           @unique
+  passwordHash       String
+  name               String
+  role               String           @default("BUSINESS_OWNER") // SUPER_ADMIN, BUSINESS_OWNER, SUPPORT_AGENT, CUSTOMER
+  businessId         String?
+  business           Business?        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessMembers    BusinessMember[]
+  assignedTickets    SupportTicket[]  @relation("AssignedAgent")
+  sentTicketMessages TicketMessage[]
+  notifications      Notification[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([businessId])
+  @@index([email])
+}
+
+model Business {
+  id            String              @id @default(uuid())
+  name          String
+  slug          String              @unique
+  businessType  String?
+  logoUrl       String?
+  website       String?
+  status        String              @default("ACTIVE") // ACTIVE, SUSPENDED
+  users         User[]
+  members       BusinessMember[]
+  agents        Agent[]
+  documents     KnowledgeDocument[]
+  chunks        KnowledgeChunk[]
+  products      Product[]
+  customers     Customer[]
+  conversations Conversation[]
+  tickets       SupportTicket[]
+  feedback      Feedback[]
+  notifications Notification[]
+  subscription  Subscription?
+  usageRecords  UsageRecord[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@index([slug])
+}
+
+model BusinessMember {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       String   @default("SUPPORT_AGENT") // OWNER, ADMIN, SUPPORT_AGENT
+  status     String   @default("ACTIVE") // ACTIVE, INVITED, INACTIVE
+  joinedAt   DateTime @default(now())
+
+  @@unique([businessId, userId])
+  @@index([businessId])
+}
+
+model Agent {
+  id             String              @id @default(uuid())
+  businessId     String
+  business       Business            @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+  language       String              @default("English") // English, Telugu, Hindi, Multi-language
+  tone           String              @default("Friendly") // Friendly, Professional, Casual, Formal
+  purpose        String
+  welcomeMessage String
+  fallbackMessage String
+  avatarUrl      String?
+  isActive       Boolean             @default(true)
+  temperature    Float               @default(0.7)
+  systemPrompt   String?
+  widgetConfig   String?             // JSON string: { primaryColor, position, theme, greeting }
+  documents      KnowledgeDocument[]
+  chunks         KnowledgeChunk[]
+  conversations  Conversation[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([businessId])
+}
+
+model KnowledgeDocument {
+  id           String           @id @default(uuid())
+  businessId   String
+  business     Business         @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  agentId      String?
+  agent        Agent?           @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  title        String
+  fileType     String           // PDF, DOCX, TXT, CSV, FAQ, URL, PRODUCT
+  originalName String?
+  fileSize     Int?
+  status       String           @default("COMPLETED") // PENDING, PROCESSING, COMPLETED, FAILED
+  errorMessage String?
+  chunkCount   Int              @default(0)
+  sourceUrl    String?
+  rawContent   String?
+  chunks       KnowledgeChunk[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([businessId])
+  @@index([agentId])
+}
+
+model KnowledgeChunk {
+  id         String             @id @default(uuid())
+  documentId String?
+  document   KnowledgeDocument? @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  businessId String
+  business   Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  agentId    String?
+  agent      Agent?             @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  content    String
+  chunkIndex Int                @default(0)
+  embedding  String?            // JSON stringified vector array of floats [0.012, -0.045, ...]
+  metadata   String?            // JSON stringified metadata (title, category, source)
+  createdAt  DateTime           @default(now())
+
+  @@index([businessId])
+  @@index([documentId])
+  @@index([agentId])
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name        String
+  description String
+  category    String
+  price       Float
+  stock       Int      @default(100)
+  unit        String?  // 250g, 500g, 1kg, etc.
+  imageUrl    String?
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([businessId])
+  @@index([category])
+}
+
+model Customer {
+  id                 String          @id @default(uuid())
+  businessId         String
+  business           Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  externalId         String?         // Anonymous cookie/visitor identifier
+  name               String?
+  email              String?
+  phone              String?
+  metadata           String?         // JSON
+  totalConversations Int             @default(0)
+  csatScore          Float?
+  lastSeenAt         DateTime        @default(now())
+  conversations      Conversation[]
+  tickets            SupportTicket[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@index([businessId])
+  @@index([email])
+}
+
+model Conversation {
+  id            String          @id @default(uuid())
+  businessId    String
+  business      Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  agentId       String
+  agent         Agent           @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  customerId    String
+  customer      Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  status        String          @default("ACTIVE") // ACTIVE, RESOLVED_AI, ESCALATED_HUMAN, CLOSED
+  primaryIntent String?
+  resolvedBy    String?         // AI, HUMAN, UNRESOLVED
+  messages      Message[]
+  tickets       SupportTicket[]
+  feedback      Feedback[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([businessId])
+  @@index([agentId])
+  @@index([customerId])
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderType     String       // USER, AGENT, SYSTEM, SUPPORT_AGENT
+  content        String
+  intent         String?
+  latencyMs      Int?
+  tokensUsed     Int?
+  isHelpful      Boolean?
+  sources        String?      // JSON array of retrieved sources
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}
+
+model SupportTicket {
+  id              String          @id @default(uuid())
+  businessId      String
+  business        Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customerId      String
+  customer        Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  conversationId  String?
+  conversation    Conversation?   @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  assignedAgentId String?
+  assignedAgent   User?           @relation("AssignedAgent", fields: [assignedAgentId], references: [id], onDelete: SetNull)
+  ticketNumber    Int             @default(1001)
+  title           String
+  description     String
+  priority        String          @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  status          String          @default("OPEN") // OPEN, IN_PROGRESS, WAITING_FOR_CUSTOMER, RESOLVED, CLOSED
+  messages        TicketMessage[]
+  resolvedAt      DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([businessId])
+  @@index([customerId])
+  @@index([assignedAgentId])
+  @@index([status])
+}
+
+model TicketMessage {
+  id          String        @id @default(uuid())
+  ticketId    String
+  ticket      SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderId    String?
+  sender      User?         @relation(fields: [senderId], references: [id], onDelete: SetNull)
+  senderType  String        // CUSTOMER, SUPPORT_AGENT, SYSTEM
+  message     String
+  attachments String?       // JSON
+  createdAt   DateTime      @default(now())
+
+  @@index([ticketId])
+}
+
+model Feedback {
+  id             String        @id @default(uuid())
+  businessId     String
+  business       Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  messageId      String?
+  rating         Int           // 1 for negative, 5 for positive
+  comment        String?
+  createdAt      DateTime      @default(now())
+
+  @@index([businessId])
+  @@index([conversationId])
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String
+  message    String
+  type       String   // NEW_TICKET, ESCALATION, NEW_MESSAGE, SYSTEM_ALERT, DOC_PROCESSED
+  isRead     Boolean  @default(false)
+  link       String?
+  createdAt  DateTime @default(now())
+
+  @@index([businessId])
+  @@index([userId])
+}
+
+model Subscription {
+  id                 String    @id @default(uuid())
+  businessId         String    @unique
+  business           Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  plan               String    @default("FREE") // FREE, STARTER, BUSINESS
+  status             String    @default("ACTIVE") // ACTIVE, PAST_DUE, CANCELLED
+  currentPeriodStart DateTime  @default(now())
+  currentPeriodEnd   DateTime?
+  conversationLimit  Int       @default(100)
+  agentLimit         Int       @default(1)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([businessId])
+}
+
+model UsageRecord {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  metric     String   // CONVERSATIONS, TICKETS, STORAGE_MB
+  count      Int      @default(0)
+  month      Int
+  year       Int
+  recordedAt DateTime @default(now())
+
+  @@unique([businessId, metric, month, year])
+  @@index([businessId])
+}
