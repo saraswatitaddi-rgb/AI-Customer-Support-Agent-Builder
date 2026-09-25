@@ -15,6 +15,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { AuroraBeam } from '../ui/aurora-beam';
+import ShapeGrid from '../ui/ShapeGrid';
 
 const HeroSection = () => {
   const [demoQuery, setDemoQuery] = useState('');
@@ -129,9 +130,22 @@ const HeroSection = () => {
       <AuroraBeam
         intensity="vibrant"
         beamColor="default"
-        showGrid={true}
-        className="absolute inset-0 z-0"
+        showGrid={false}
+        className="absolute inset-0 z-0 pointer-events-none"
       />
+
+      {/* React Bits - Interactive ShapeGrid with Mouse Hover Trails */}
+      <div className="absolute inset-0 z-[1] pointer-events-auto opacity-50 overflow-hidden">
+        <ShapeGrid
+          direction="diagonal"
+          speed={0.4}
+          borderColor="rgba(129, 140, 248, 0.16)"
+          squareSize={46}
+          hoverFillColor="rgba(99, 102, 241, 0.35)"
+          shape="hexagon"
+          hoverTrailAmount={6}
+        />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto">

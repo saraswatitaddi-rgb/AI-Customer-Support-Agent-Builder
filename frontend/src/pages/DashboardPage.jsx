@@ -25,6 +25,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { AuroraBeam } from '../components/ui/aurora-beam';
+import ShapeGrid from '../components/ui/ShapeGrid';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
@@ -245,9 +246,22 @@ const DashboardPage = () => {
       <AuroraBeam
         intensity="subtle"
         beamColor="default"
-        showGrid={true}
+        showGrid={false}
         className="fixed inset-0 pointer-events-none z-0"
       />
+
+      {/* React Bits - Interactive ShapeGrid Ambient Canvas */}
+      <div className="fixed inset-0 z-0 pointer-events-auto opacity-20 overflow-hidden">
+        <ShapeGrid
+          direction="diagonal"
+          speed={0.25}
+          borderColor="rgba(129, 140, 248, 0.1)"
+          squareSize={50}
+          hoverFillColor="rgba(99, 102, 241, 0.25)"
+          shape="hexagon"
+          hoverTrailAmount={5}
+        />
+      </div>
 
       {/* Top App Header */}
       <header className="sticky top-0 z-40 bg-[#090d16]/90 backdrop-blur-md border-b border-white/10 px-4 sm:px-8 py-3.5 flex items-center justify-between">

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Bot, User, Mail, Lock, ArrowRight, AlertCircle, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
 import { AuroraBeam } from '../components/ui/aurora-beam';
+import ShapeGrid from '../components/ui/ShapeGrid';
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -55,9 +56,21 @@ const RegisterPage = () => {
       intensity="vibrant"
       beamColor="cosmic"
       fullPage
-      showGrid={true}
-      className="bg-[#090d16] text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-purple-500 selection:text-white"
+      showGrid={false}
+      className="bg-[#090d16] text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-purple-500 selection:text-white relative"
     >
+      {/* React Bits - Interactive ShapeGrid */}
+      <div className="absolute inset-0 z-0 pointer-events-auto opacity-40 overflow-hidden">
+        <ShapeGrid
+          direction="diagonal"
+          speed={0.35}
+          borderColor="rgba(192, 132, 252, 0.16)"
+          squareSize={44}
+          hoverFillColor="rgba(168, 85, 247, 0.3)"
+          shape="triangle"
+          hoverTrailAmount={6}
+        />
+      </div>
 
       {/* Header / Brand */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">

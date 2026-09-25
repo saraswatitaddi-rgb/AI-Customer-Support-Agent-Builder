@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Bot, Mail, Lock, ArrowRight, AlertCircle, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
 import { AuroraBeam } from '../components/ui/aurora-beam';
+import ShapeGrid from '../components/ui/ShapeGrid';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -44,9 +45,21 @@ const LoginPage = () => {
       intensity="vibrant"
       beamColor="default"
       fullPage
-      showGrid={true}
-      className="bg-[#090d16] text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-indigo-500 selection:text-white"
+      showGrid={false}
+      className="bg-[#090d16] text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-indigo-500 selection:text-white relative"
     >
+      {/* React Bits - Interactive ShapeGrid */}
+      <div className="absolute inset-0 z-0 pointer-events-auto opacity-40 overflow-hidden">
+        <ShapeGrid
+          direction="right"
+          speed={0.3}
+          borderColor="rgba(129, 140, 248, 0.15)"
+          squareSize={42}
+          hoverFillColor="rgba(99, 102, 241, 0.3)"
+          shape="square"
+          hoverTrailAmount={5}
+        />
+      </div>
 
       {/* Header / Brand */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">

@@ -16,6 +16,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AuroraBeam } from '../components/ui/aurora-beam';
+import ShapeGrid from '../components/ui/ShapeGrid';
 
 function LandingPage() {
   const { isAuthenticated } = useAuth();
@@ -53,8 +54,21 @@ function LandingPage() {
             intensity="vibrant"
             beamColor="cosmic"
             showGrid={false}
-            className="absolute inset-0 z-0 opacity-80"
+            className="absolute inset-0 z-0 opacity-80 pointer-events-none"
           />
+
+          {/* React Bits - Interactive ShapeGrid with Mouse Hover Trails */}
+          <div className="absolute inset-0 z-0 pointer-events-auto opacity-40 overflow-hidden">
+            <ShapeGrid
+              direction="diagonal"
+              speed={0.35}
+              borderColor="rgba(168, 85, 247, 0.18)"
+              squareSize={46}
+              hoverFillColor="rgba(168, 85, 247, 0.35)"
+              shape="hexagon"
+              hoverTrailAmount={6}
+            />
+          </div>
 
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="glass-card rounded-3xl p-8 sm:p-12 md:p-16 border border-indigo-500/20 text-center relative overflow-hidden shadow-2xl shadow-indigo-500/10">
