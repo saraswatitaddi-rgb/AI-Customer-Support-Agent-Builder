@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Bot, User, Mail, Lock, ArrowRight, AlertCircle, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
 import { AuroraBeam } from '../components/ui/aurora-beam';
 import ShapeGrid from '../components/ui/ShapeGrid';
+import MoltenMetal from '../components/ui/MoltenMetal';
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -53,14 +54,42 @@ const RegisterPage = () => {
 
   return (
     <AuroraBeam
-      intensity="vibrant"
+      intensity="subtle"
       beamColor="cosmic"
       fullPage
       showGrid={false}
       className="bg-[#090d16] text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-purple-500 selection:text-white relative"
     >
+      {/* React Bits - MoltenMetal Liquid Shader (Cosmic Purple/Fuchsia) */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-auto opacity-60 overflow-hidden"
+        style={{
+          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 85%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 85%)',
+        }}
+      >
+        <MoltenMetal
+          color1="#4A044E"
+          color2="#E879F9"
+          color3="#FFFFFF"
+          speed={0.25}
+          scale={3.8}
+          detail={3}
+          glow={1.6}
+          coreSize={0.08}
+          swirl={0.9}
+          fold={-0.18}
+          blackPoint={0.05}
+          brightness={1.25}
+          colorMode="molten"
+          mouseInteraction={true}
+          mouseStrength={0.25}
+          opacity={0.8}
+        />
+      </div>
+
       {/* React Bits - Interactive ShapeGrid */}
-      <div className="absolute inset-0 z-0 pointer-events-auto opacity-40 overflow-hidden">
+      <div className="absolute inset-0 z-0 pointer-events-auto opacity-30 overflow-hidden">
         <ShapeGrid
           direction="diagonal"
           speed={0.35}

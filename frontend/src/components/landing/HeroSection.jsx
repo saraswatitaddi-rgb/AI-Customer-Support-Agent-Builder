@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { AuroraBeam } from '../ui/aurora-beam';
 import ShapeGrid from '../ui/ShapeGrid';
+import MoltenMetal from '../ui/MoltenMetal';
 
 const HeroSection = () => {
   const [demoQuery, setDemoQuery] = useState('');
@@ -126,20 +127,50 @@ const HeroSection = () => {
 
   return (
     <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
+      {/* React Bits - MoltenMetal Fluid Shader Canvas */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-auto opacity-75 overflow-hidden"
+        style={{
+          maskImage: 'radial-gradient(ellipse 85% 65% at 50% 32%, black 25%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 85% 65% at 50% 32%, black 25%, transparent 80%)',
+        }}
+      >
+        <MoltenMetal
+          color1="#312E81"
+          color2="#818CF8"
+          color3="#FFFFFF"
+          speed={0.28}
+          scale={3.5}
+          detail={3}
+          glow={1.8}
+          coreSize={0.08}
+          swirl={0.8}
+          fold={-0.18}
+          blackPoint={0.05}
+          brightness={1.3}
+          colorMode="molten"
+          grain={true}
+          grainIntensity={0.04}
+          mouseInteraction={true}
+          mouseStrength={0.3}
+          opacity={0.85}
+        />
+      </div>
+
       {/* React Bits Pro - Aurora Beam sweeping layered light background */}
       <AuroraBeam
-        intensity="vibrant"
+        intensity="subtle"
         beamColor="default"
         showGrid={false}
         className="absolute inset-0 z-0 pointer-events-none"
       />
 
       {/* React Bits - Interactive ShapeGrid with Mouse Hover Trails */}
-      <div className="absolute inset-0 z-[1] pointer-events-auto opacity-50 overflow-hidden">
+      <div className="absolute inset-0 z-[1] pointer-events-auto opacity-35 overflow-hidden">
         <ShapeGrid
           direction="diagonal"
           speed={0.4}
-          borderColor="rgba(129, 140, 248, 0.16)"
+          borderColor="rgba(129, 140, 248, 0.15)"
           squareSize={46}
           hoverFillColor="rgba(99, 102, 241, 0.35)"
           shape="hexagon"

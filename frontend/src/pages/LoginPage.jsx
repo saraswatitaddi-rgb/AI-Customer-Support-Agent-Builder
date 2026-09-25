@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Bot, Mail, Lock, ArrowRight, AlertCircle, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
 import { AuroraBeam } from '../components/ui/aurora-beam';
 import ShapeGrid from '../components/ui/ShapeGrid';
+import MoltenMetal from '../components/ui/MoltenMetal';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -42,18 +43,46 @@ const LoginPage = () => {
 
   return (
     <AuroraBeam
-      intensity="vibrant"
+      intensity="subtle"
       beamColor="default"
       fullPage
       showGrid={false}
       className="bg-[#090d16] text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-indigo-500 selection:text-white relative"
     >
+      {/* React Bits - MoltenMetal Liquid Shader */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-auto opacity-60 overflow-hidden"
+        style={{
+          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 85%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 85%)',
+        }}
+      >
+        <MoltenMetal
+          color1="#3730A3"
+          color2="#A5B4FC"
+          color3="#FFFFFF"
+          speed={0.25}
+          scale={3.8}
+          detail={3}
+          glow={1.6}
+          coreSize={0.08}
+          swirl={0.9}
+          fold={-0.18}
+          blackPoint={0.05}
+          brightness={1.25}
+          colorMode="molten"
+          mouseInteraction={true}
+          mouseStrength={0.25}
+          opacity={0.8}
+        />
+      </div>
+
       {/* React Bits - Interactive ShapeGrid */}
-      <div className="absolute inset-0 z-0 pointer-events-auto opacity-40 overflow-hidden">
+      <div className="absolute inset-0 z-0 pointer-events-auto opacity-30 overflow-hidden">
         <ShapeGrid
           direction="right"
           speed={0.3}
-          borderColor="rgba(129, 140, 248, 0.15)"
+          borderColor="rgba(129, 140, 248, 0.14)"
           squareSize={42}
           hoverFillColor="rgba(99, 102, 241, 0.3)"
           shape="square"

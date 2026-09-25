@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { AuroraBeam } from '../components/ui/aurora-beam';
 import ShapeGrid from '../components/ui/ShapeGrid';
+import MoltenMetal from '../components/ui/MoltenMetal';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
@@ -242,6 +243,26 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white relative">
+      {/* React Bits - MoltenMetal Ambient Fluid Filament */}
+      <div 
+        className="fixed inset-0 z-0 pointer-events-none opacity-30 overflow-hidden"
+        style={{
+          maskImage: 'radial-gradient(ellipse 90% 70% at 50% 20%, black 15%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 90% 70% at 50% 20%, black 15%, transparent 80%)',
+        }}
+      >
+        <MoltenMetal
+          color1="#312E81"
+          color2="#818CF8"
+          color3="#FFFFFF"
+          speed={0.2}
+          scale={4.5}
+          glow={1.4}
+          opacity={0.5}
+          mouseInteraction={false}
+        />
+      </div>
+
       {/* React Bits Pro - Aurora Beam ambient sweeping sheets */}
       <AuroraBeam
         intensity="subtle"

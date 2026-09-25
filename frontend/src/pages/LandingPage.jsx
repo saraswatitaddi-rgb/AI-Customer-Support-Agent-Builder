@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AuroraBeam } from '../components/ui/aurora-beam';
 import ShapeGrid from '../components/ui/ShapeGrid';
+import MoltenMetal from '../components/ui/MoltenMetal';
 
 function LandingPage() {
   const { isAuthenticated } = useAuth();
@@ -49,12 +50,31 @@ function LandingPage() {
 
         {/* High-Converting Pre-Footer CTA Section */}
         <section className="py-20 relative overflow-hidden bg-gradient-to-b from-slate-950/60 to-[#090d16] border-t border-white/5">
+          {/* React Bits - MoltenMetal Fluid Shimmer */}
+          <div 
+            className="absolute inset-0 z-0 pointer-events-auto opacity-50 overflow-hidden"
+            style={{
+              maskImage: 'radial-gradient(ellipse 75% 65% at 50% 50%, black 20%, transparent 80%)',
+              WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 50% 50%, black 20%, transparent 80%)',
+            }}
+          >
+            <MoltenMetal
+              color1="#4338CA"
+              color2="#C084FC"
+              color3="#FFFFFF"
+              speed={0.25}
+              scale={3.5}
+              glow={1.6}
+              opacity={0.8}
+            />
+          </div>
+
           {/* React Bits Pro - Aurora Beam cosmic layered sheets */}
           <AuroraBeam
-            intensity="vibrant"
+            intensity="subtle"
             beamColor="cosmic"
             showGrid={false}
-            className="absolute inset-0 z-0 opacity-80 pointer-events-none"
+            className="absolute inset-0 z-0 opacity-70 pointer-events-none"
           />
 
           {/* React Bits - Interactive ShapeGrid with Mouse Hover Trails */}
