@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { Bot, Sparkles, ChevronRight, Menu, X, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { Bot, Sparkles, ChevronRight, Menu, X, ArrowRight, LayoutDashboard, User } from 'lucide-react';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated, user } = useAuth();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#090d16]/80 backdrop-blur-md border-b border-white/10 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20">
               <Bot className="w-6 h-6 text-white" />
             </div>
@@ -19,7 +22,7 @@ const Navbar = () => {
               </span>
               <span className="text-[10px] text-slate-400 font-medium tracking-wide">Support Agent Builder</span>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center gap-8">
@@ -45,23 +48,33 @@ const Navbar = () => {
 
           {/* Action Buttons */}
           <div className="hidden md:flex items-center gap-4">
-            <button
-              onClick={() => alert('Authentication & Dashboard routes will be connected in Phase 2!')}
-              className="text-sm font-semibold text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => {
-                const el = document.getElementById('chat-demo');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-sm shadow-md shadow-indigo-500/20 transition-all duration-200 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0"
-            >
-              <Sparkles className="w-4 h-4 text-indigo-200" />
-              <span>Get Started</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-sm shadow-md shadow-indigo-500/20 transition-all duration-200 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0"
+              >
+                <LayoutDashboard className="w-4 h-4 text-indigo-200" />
+                <span>Dashboard ({user?.name?.split(' ')[0]})</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-sm font-semibold text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-sm shadow-md shadow-indigo-500/20 transition-all duration-200 hover:shadow-indigo-500/40 hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  <Sparkles className="w-4 h-4 text-indigo-200" />
+                  <span>Get Started</span>
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu trigger */}
@@ -114,30 +127,34 @@ const Navbar = () => {
           >
             Live Demo
           </a>
-          <a
-            href="#analytics"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800/60"
-          >
-            Analytics
-          </a>
           <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
-            <button
-              onClick={() => alert('Authentication will be activated in the next phase!')}
-              className="w-full text-center py-2.5 rounded-lg border border-white/10 text-sm font-medium text-white"
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                const el = document.getElementById('chat-demo');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="w-full text-center py-2.5 rounded-lg bg-indigo-600 text-sm font-medium text-white shadow-md shadow-indigo-600/30"
-            >
-              Get Started Free
-            </button>
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full text-center py-2.5 rounded-lg bg-indigo-600 text-sm font-medium text-white shadow-md shadow-indigo-600/30 flex items-center justify-center gap-2"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Open Dashboard</span>
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 rounded-lg border border-white/10 text-sm font-medium text-white"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 rounded-lg bg-indigo-600 text-sm font-medium text-white shadow-md shadow-indigo-600/30"
+                >
+                  Get Started Free
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

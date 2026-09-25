@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config/env');
-const prisma = require('../config/prisma');
+const User = require('../models/User');
 const { error } = require('../utils/response');
 
 const authenticate = async (req, res, next) => {
@@ -21,19 +21,12 @@ const authenticate = async (req, res, next) => {
       return error(res, 'Invalid authentication token.', 401);
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-      include: {
-        business: true,
-      },
-    });
-
+    const user = await User.findById(decoded.userId).select('-password');
     if (!user) {
       return error(res, 'User no longer exists.', 401);
     }
 
     req.user = user;
-    req.businessId = user.businessId;
     next();
   } catch (err) {
     return next(err);
@@ -46,13 +39,9 @@ const optionalAuth = async (req, res, next) => {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
       const decoded = jwt.verify(token, config.jwtSecret);
-      const user = await prisma.user.findUnique({
-        where: { id: decoded.userId },
-        include: { business: true },
-      });
+      const user = await User.findById(decoded.userId).select('-password');
       if (user) {
         req.user = user;
-        req.businessId = user.businessId;
       }
     }
   } catch (err) {

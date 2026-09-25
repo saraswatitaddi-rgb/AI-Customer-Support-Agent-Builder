@@ -54,19 +54,33 @@ const HeroSection = () => {
     setIsLoading(true);
 
     try {
-      // Call the existing backend chat API (try relative /api/chat via proxy, fallback to port 5000)
+      const apiBase = import.meta.env.VITE_API_URL || '';
+      const historyPayload = messages.map((m) => ({
+        role: m.sender === 'user' ? 'user' : 'agent',
+        content: m.text,
+      }));
+
+      // Call the existing backend chat API with multi-turn conversation context
       let response;
       try {
-        response = await fetch('/api/chat', {
+        response = await fetch(`${apiBase}/api/chat`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: userText }),
+          body: JSON.stringify({ 
+            message: userText,
+            conversationId: 'hero_live_session',
+            history: historyPayload,
+          }),
         });
-      } catch (err) {
+      } catch (networkErr) {
         response = await fetch('http://localhost:5000/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: userText }),
+          body: JSON.stringify({ 
+            message: userText,
+            conversationId: 'hero_live_session',
+            history: historyPayload,
+          }),
         });
       }
 

@@ -59,94 +59,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Real-Time AI Support Chat Endpoint
-app.post('/api/chat', async (req, res) => {
-  try {
-    const rawMessage = req.body?.message || req.body?.query || req.body?.text;
-    if (!rawMessage || typeof rawMessage !== 'string' || !rawMessage.trim()) {
-      return res.status(400).json({
-        success: false,
-        error: 'Message text is required and cannot be empty.',
-      });
-    }
+// API Route Mounts
+const authRoutes = require('./src/routes/authRoutes');
+const agentRoutes = require('./src/routes/agentRoutes');
+const chatRoutes = require('./src/routes/chatRoutes');
 
-    const userMessage = rawMessage.trim();
-    const intent = detectIntent(userMessage);
-
-    const defaultAgent = {
-      name: req.body?.agentName || 'Nisa Support AI',
-      tone: req.body?.tone || 'Friendly',
-      language: req.body?.language || 'English',
-      purpose: 'Customer support, pricing inquiries, order tracking, and product information for authentic homemade Andhra snacks & non-veg pickles.',
-      fallbackMessage: "I don't have enough verified information in our store knowledge base to answer that accurately. Would you like me to connect you with a human support agent?",
-    };
-
-    const nisaKnowledgeChunks = [
-      {
-        content: "Nisa Home Foods Delivery Policy: Express courier delivery to Bengaluru, Hyderabad, Chennai, Mumbai, Delhi takes 2-3 business days. Free shipping on orders above ₹999. Pincodes across all major Indian cities are serviceable with real-time tracking.",
-        metadata: { title: 'Nisa Delivery Policy & Menu.pdf' }
-      },
-      {
-        content: "Products & Pricing Catalog: Traditional Andhra Chicken Pickle with bone 250g is ₹250, 500g is ₹500, 1kg is ₹950. Boneless Chicken Pickle 250g is ₹320, 500g is ₹620. Mutton Pickle 250g is ₹450, 500g is ₹880. Prawns Pickle 250g is ₹380, 500g is ₹720. Freshly prepared with traditional cold-pressed groundnut oil and no artificial preservatives.",
-        metadata: { title: 'Products_Catalog.csv' }
-      },
-      {
-        content: "Traditional Sweets & Savories: Bobbatlu, Pootharekulu, Sunnundalu, Chekkalu, Murukulu freshly prepared with home ingredients, pure organic ghee. Shelf life: 21 days for sweets, 3 months for pickles.",
-        metadata: { title: 'Nisa Home Foods Catalog.pdf' }
-      },
-      {
-        content: "Multilingual Regional Support: Telugu ('అవును! బెంగళూరుకి మా చికెన్ పచ్చడి మరియు స్వీట్స్ డెలివరీ చేస్తాము. 2-3 రోజుల్లో డెలివరీ అవుతుంది.'), Hindi ('हाँ! हम चिकन अचार और मिठाइयाँ एक्सप्रेस कूरियर द्वारा 2-3 दिनों में डिलीवर करते हैं। 250 ग्राम ₹250 और 500 ग्राम ₹500 का है।').",
-        metadata: { title: 'Multilingual Regional Support' }
-      }
-    ];
-
-    const q = userMessage.toLowerCase();
-    let reply = '';
-    let source = '';
-
-    if (intent === INTENTS.HUMAN_SUPPORT || q.includes('human') || q.includes('talk') || q.includes('agent') || q.includes('executive') || q.includes('support')) {
-      reply = "I've flagged this for our human support desk. Ticket #1042 created with priority MEDIUM. A representative will join shortly!";
-      source = "Action: Live Human Agent Escalation Ticket #1042";
-    } else if (q.includes('chicken pickle') || q.includes('price') || q.includes('cost') || q.includes('pickle')) {
-      reply = "Chicken Pickle is ₹250 for 250g and ₹500 for 500g (Boneless is ₹320 for 250g). Freshly prepared with traditional cold-pressed oil and no artificial preservatives.";
-      source = "Knowledge Source: Products_Catalog.csv";
-    } else if (q.includes('bengaluru') || q.includes('bangalore') || q.includes('deliver') || q.includes('delivery')) {
-      reply = "Yes! We deliver Chicken Pickle and sweets to Bengaluru via express courier. Delivery typically takes 2-3 business days. 250g is ₹250 and 500g is ₹500.";
-      source = "Knowledge Source: Nisa Delivery Policy & Menu.pdf";
-    } else if (q.includes('undha') || q.includes('cheyyali') || q.includes('telugu')) {
-      reply = "అవును! బెంగళూరుకి మా చికెన్ పచ్చడి మరియు స్వీట్స్ ఎక్స్‌ప్రెస్ కొరియర్ ద్వారా 2-3 రోజుల్లో డెలివరీ చేస్తాము. ఆర్డర్ లేదా ధరల వివరాలు కావాలా?";
-      source = "Multilingual RAG: Telugu Regional Support Model";
-    } else if (q.includes('kya') || q.includes('chahiye') || q.includes('hindi')) {
-      reply = "हाँ! हम बेंगलुरु और अन्य शहरों में चिकन अचार और मिठाइयाँ एक्सप्रेस कूरियर द्वारा 2-3 दिनों में डिलीवर करते हैं। 250 ग्राम चिकन अचार ₹250 और 500 ग्राम ₹500 का है।";
-      source = "Multilingual RAG: Hindi Regional Support Model";
-    } else {
-      const generated = await generateAnswer(userMessage, defaultAgent, nisaKnowledgeChunks, req.body?.history || []);
-      reply = generated.content;
-      source = generated.isFallback 
-        ? "Fallback Guardrail: Insufficient verified knowledge"
-        : "Knowledge Source: Nisa Home Foods Catalog.pdf";
-    }
-
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-    return res.status(200).json({
-      success: true,
-      reply,
-      response: reply,
-      message: reply,
-      source,
-      intent,
-      time: timeStr,
-    });
-  } catch (err) {
-    logger.error('Error handling /api/chat:', err);
-    return res.status(500).json({
-      success: false,
-      error: 'Failed to process chat message. Please try again.',
-    });
-  }
-});
+app.use('/api/auth', authRoutes);
+app.use('/api/agent', agentRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Socket.IO Event Handlers
 io.on('connection', (socket) => {
