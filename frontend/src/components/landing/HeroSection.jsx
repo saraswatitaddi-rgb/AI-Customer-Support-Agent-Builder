@@ -14,6 +14,7 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react';
+import { AuroraBeam } from '../ui/aurora-beam';
 
 const HeroSection = () => {
   const [demoQuery, setDemoQuery] = useState('');
@@ -124,9 +125,13 @@ const HeroSection = () => {
 
   return (
     <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
-      {/* Background Radial Glow Gradients */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-indigo-600/15 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[350px] h-[350px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
+      {/* React Bits Pro - Aurora Beam sweeping layered light background */}
+      <AuroraBeam
+        intensity="vibrant"
+        beamColor="default"
+        showGrid={true}
+        className="absolute inset-0 z-0"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto">

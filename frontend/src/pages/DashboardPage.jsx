@@ -24,6 +24,7 @@ import {
   ExternalLink,
   RefreshCw
 } from 'lucide-react';
+import { AuroraBeam } from '../components/ui/aurora-beam';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
@@ -239,7 +240,15 @@ const DashboardPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white relative">
+      {/* React Bits Pro - Aurora Beam ambient sweeping sheets */}
+      <AuroraBeam
+        intensity="subtle"
+        beamColor="default"
+        showGrid={true}
+        className="fixed inset-0 pointer-events-none z-0"
+      />
+
       {/* Top App Header */}
       <header className="sticky top-0 z-40 bg-[#090d16]/90 backdrop-blur-md border-b border-white/10 px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-6">

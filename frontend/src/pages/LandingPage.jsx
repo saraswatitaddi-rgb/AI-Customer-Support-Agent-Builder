@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { AuroraBeam } from '../components/ui/aurora-beam';
 
 function LandingPage() {
   const { isAuthenticated } = useAuth();
@@ -47,8 +48,13 @@ function LandingPage() {
 
         {/* High-Converting Pre-Footer CTA Section */}
         <section className="py-20 relative overflow-hidden bg-gradient-to-b from-slate-950/60 to-[#090d16] border-t border-white/5">
-          {/* Ambient Glows */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
+          {/* React Bits Pro - Aurora Beam cosmic layered sheets */}
+          <AuroraBeam
+            intensity="vibrant"
+            beamColor="cosmic"
+            showGrid={false}
+            className="absolute inset-0 z-0 opacity-80"
+          />
 
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="glass-card rounded-3xl p-8 sm:p-12 md:p-16 border border-indigo-500/20 text-center relative overflow-hidden shadow-2xl shadow-indigo-500/10">

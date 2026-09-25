@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Bot, Mail, Lock, ArrowRight, AlertCircle, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { AuroraBeam } from '../components/ui/aurora-beam';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -39,9 +40,13 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background radial glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-indigo-600/15 rounded-full blur-[130px] pointer-events-none" />
+    <AuroraBeam
+      intensity="vibrant"
+      beamColor="default"
+      fullPage
+      showGrid={true}
+      className="bg-[#090d16] text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-indigo-500 selection:text-white"
+    >
 
       {/* Header / Brand */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
@@ -152,7 +157,7 @@ const LoginPage = () => {
           </Link>
         </div>
       </div>
-    </div>
+    </AuroraBeam>
   );
 };
 
